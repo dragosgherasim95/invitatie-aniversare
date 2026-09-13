@@ -20,7 +20,7 @@
             position: relative;
         }
 
-        /* --- PLICUL ELEGANT (Fără inimioară) --- */
+        /* --- PLICUL ELEGANT --- */
         #envelopeScreen {
             display: flex;
             flex-direction: column;
@@ -51,7 +51,6 @@
             justify-content: center;
         }
 
-        /* Buzunarul interior al plicului (liniile de sub clapă) */
         .envelope::before {
             content: '';
             position: absolute;
@@ -80,7 +79,6 @@
             border-bottom-right-radius: 6px;
         }
 
-        /* Capacul superior al plicului care se deschide */
         .envelope-flap {
             position: absolute;
             top: 0;
@@ -96,7 +94,6 @@
             filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
         }
 
-        /* Sigiliu elegant din ceară stilizată (fără inimioară) */
         .envelope-seal {
             position: absolute;
             top: 100px;
@@ -133,7 +130,6 @@
             animation: pulse-label 1.5s infinite alternate;
         }
 
-        /* Animație deschidere plic */
         .envelope.open .envelope-flap {
             transform: rotateX(180deg);
             z-index: 1;
@@ -199,6 +195,13 @@
         }
         .btn-start:hover {
             background-color: #9a6d31;
+        }
+        .error-msg {
+            color: #e74c3c;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
         }
 
         /* --- INVITAȚIA PROPRIU-ZISĂ --- */
@@ -412,6 +415,7 @@
         <p>Te rog introdu Numele și Prenumele tău pentru a continua:</p>
         <input type="text" id="guestNameInput" class="name-input" placeholder="Ex: Popescu Ion" autocomplete="name">
         <button class="btn-start" onclick="openInvitation()">Deschide Invitația</button>
+        <div id="errorMessage" class="error-msg">Ne pare rău, dar nu ești pe lista de invitați.</div>
     </div>
 
     <!-- 3. INVITAȚIA PROPRIU-ZISĂ -->
@@ -473,6 +477,9 @@
     <script>
         const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
 
+        // Lista oficială de invitați (fără diacritice sau majuscule forțate în verificare)
+        const allowedGuests = ["raluca", "florin", "vlada", "lucian", "mihai", "denisa", "amalia", "mihaela", "vlad", "razvan"];
+
         function openEnvelope() {
             const envelope = document.getElementById('envelope');
             envelope.classList.add('open');
@@ -485,14 +492,34 @@
 
         function openInvitation() {
             const input = document.getElementById('guestNameInput');
-            const name = input.value.trim();
+            const errorMsg = document.getElementById('errorMessage');
+            const rawName = input.value.trim().toLowerCase();
 
-            if (name === "") {
-                alert("Te rog să introduci numele și prenumele înainte de a continua!");
+            if (rawName === "") {
+                errorMsg.innerText = "Te rog să introduci numele și prenumele înainte de a continua!";
+                errorMsg.style.display = 'block';
                 return;
             }
 
-            document.getElementById('personalGreeting').innerText = `Invitație specială pentru ${name}`;
+            // Verificăm dacă vreunul dintre numele permise se regăsește în textul introdus de utilizator
+            let isAllowed = false;
+            for (let guest of allowedGuests) {
+                if (rawName.includes(guest)) {
+                    isAllowed = true;
+                    break;
+                }
+            }
+
+            if (!isAllowed) {
+                errorMsg.innerText = "Ne pare rău, dar nu ești pe lista de invitați.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Dacă este pe listă, ascundem eroarea (dacă era afișată) și deschidem invitația
+            errorMsg.style.display = 'none';
+            const capitalizedName = input.value.trim();
+            document.getElementById('personalGreeting').innerText = `Invitație specială pentru ${capitalizedName}`;
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('invitationCard').style.display = 'block';
         }
