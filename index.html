@@ -72,7 +72,7 @@
 
         /* Invitația propriu-zisă (ascunsă la început) */
         .card {
-            display: none; /* Ascuns până se introduce numele */
+            display: none;
             background-color: #ffffff;
             padding: 24px;
             border-radius: 16px;
@@ -91,38 +91,45 @@
             margin-bottom: 15px;
         }
         
-        /* Container general pentru Pickup + Text Intuitiv în dreapta jos */
-        .turntable-wrapper {
+        /* Container pentru cele două viniluri în dreapta jos */
+        .turntables-wrapper {
             position: absolute;
             bottom: 20px;
-            right: -25px;
+            right: -30px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            gap: 12px;
             z-index: 20;
-            cursor: pointer;
         }
 
         @media (max-width: 580px) {
-            .turntable-wrapper {
+            .turntables-wrapper {
                 right: 10px;
                 bottom: 15px;
             }
         }
 
-        /* Scrisul intuitiv */
+        .turntable-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Scrisul intuitiv de pe fiecare vinil */
         .turntable-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             color: #b9853f;
             background: #fff8eb;
             border: 1px solid #f0d5a8;
-            padding: 2px 6px;
+            padding: 2px 5px;
             border-radius: 6px;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             text-transform: uppercase;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             animation: pulse-label 1.5s infinite alternate;
+            white-space: nowrap;
         }
 
         @keyframes pulse-label {
@@ -130,10 +137,10 @@
             100% { transform: scale(1.05); }
         }
 
-        /* Dispozitiv Pickup (Turntable) */
+        /* Dispozitiv Pickup */
         .turntable-container {
-            width: 90px;
-            height: 80px;
+            width: 85px;
+            height: 75px;
             background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
             border: 2px solid #b9853f;
             border-radius: 12px;
@@ -146,8 +153,8 @@
         }
         
         .turntable-platter {
-            width: 62px;
-            height: 62px;
+            width: 58px;
+            height: 58px;
             background: #111;
             border-radius: 50%;
             display: flex;
@@ -158,8 +165,8 @@
         }
 
         .vinyl {
-            width: 58px;
-            height: 58px;
+            width: 54px;
+            height: 54px;
             background: radial-gradient(circle, #333 20%, #111 21%, #111 30%, #222 31%, #111 60%, #000 100%);
             border-radius: 50%;
             border: 1px solid #555;
@@ -169,12 +176,17 @@
             transition: transform 0.3s ease;
         }
         .vinyl-center {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             background-color: #e74c3c;
             border-radius: 50%;
             border: 2px solid #fff;
         }
+        /* Culoare diferită pentru centrul vinilului de dedicație */
+        .vinyl-center.special {
+            background-color: #3498db;
+        }
+
         .vinyl.spinning {
             animation: spin 3s linear infinite;
         }
@@ -184,10 +196,10 @@
 
         .tonearm {
             position: absolute;
-            top: 6px;
-            right: 6px;
+            top: 5px;
+            right: 5px;
             width: 3px;
-            height: 35px;
+            height: 32px;
             background: #d4af37;
             border-radius: 2px;
             transform-origin: top right;
@@ -212,10 +224,10 @@
 
         .power-knob {
             position: absolute;
-            bottom: 5px;
-            left: 6px;
-            width: 6px;
-            height: 6px;
+            bottom: 4px;
+            left: 5px;
+            width: 5px;
+            height: 5px;
             background: #b9853f;
             border-radius: 50%;
         }
@@ -265,7 +277,7 @@
 </head>
 <body>
 
-    <!-- 1. Ecranul în care invitatul își scrie numele -->
+    <!-- Ecranul de nume -->
     <div id="welcomeScreen">
         <h2>Bine ai venit!</h2>
         <p>Te rog introdu Numele și Prenumele tău pentru a deschide invitația:</p>
@@ -273,11 +285,11 @@
         <button class="btn-start" onclick="openInvitation()">Deschide Invitația</button>
     </div>
 
-    <!-- 2. Invitația personalizată (inițial ascunsă) -->
+    <!-- Invitația principală -->
     <div class="card" id="invitationCard">
         <div id="personalGreeting" class="personal-title"></div>
 
-        <!-- Numărătoare inversă -->
+        <!-- Countdown -->
         <div class="countdown">
             <div class="countdown-item"><span id="days" class="countdown-num">00</span><span class="countdown-label">Zile</span></div>
             <div class="countdown-item"><span id="hours" class="countdown-num">00</span><span class="countdown-label">Ore</span></div>
@@ -306,23 +318,45 @@
 
         <div id="message" class="response-message"></div>
 
-        <!-- Pickup Dispozitiv cu Vinil în dreapta jos și text Play -->
-        <div class="turntable-wrapper" onclick="toggleMusic()" title="Apasă pentru a porni muzica">
-            <div class="turntable-label">▶ Play music</div>
-            <div id="turntable" class="turntable-container">
-                <div class="turntable-platter">
-                    <div id="vinyl" class="vinyl">
-                        <div class="vinyl-center"></div>
+        <!-- Cele două viniluri în dreapta jos -->
+        <div class="turntables-wrapper">
+            <!-- Vinil 1: Melodia Principală -->
+            <div class="turntable-box" onclick="toggleMusic('bgMusic', 'vinyl1', 'turntable1')">
+                <div class="turntable-label">▶ Melodia Ta</div>
+                <div id="turntable1" class="turntable-container">
+                    <div class="turntable-platter">
+                        <div id="vinyl1" class="vinyl">
+                            <div class="vinyl-center"></div>
+                        </div>
                     </div>
+                    <div class="tonearm"></div>
+                    <div class="power-knob"></div>
                 </div>
-                <div class="tonearm"></div>
-                <div class="power-knob"></div>
+            </div>
+
+            <!-- Vinil 2: Dedicația Specială -->
+            <div class="turntable-box" onclick="toggleMusic('specialMusic', 'vinyl2', 'turntable2')">
+                <div class="turntable-label">⭐ Dedicație</div>
+                <div id="turntable2" class="turntable-container">
+                    <div class="turntable-platter">
+                        <div id="vinyl2" class="vinyl">
+                            <div class="vinyl-center special"></div>
+                        </div>
+                    </div>
+                    <div class="tonearm"></div>
+                    <div class="power-knob"></div>
+                </div>
             </div>
         </div>
 
-        <!-- Audio Player cu melodia La_multi_ani.mp3 -->
+        <!-- Player Audio 1 -->
         <audio id="bgMusic" loop>
             <source src="La_multi_ani.mp3" type="audio/mpeg">
+        </audio>
+
+        <!-- Player Audio 2 (Asigură-te că urci pe Git și melodia dedicată, ex: dedicatie.mp3) -->
+        <audio id="specialMusic" loop>
+            <source src="dedicatie.mp3" type="audio/mpeg">
         </audio>
     </div>
 
@@ -332,7 +366,6 @@
     <script>
         const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
 
-        // Funcție care preia numele și afișează invitația personalizată
         function openInvitation() {
             const input = document.getElementById('guestNameInput');
             const name = input.value.trim();
@@ -342,28 +375,40 @@
                 return;
             }
 
-            // Setează mesajul personalizat
             document.getElementById('personalGreeting').innerText = `Invitație specială pentru ${name}`;
-
-            // Ascunde ecranul de nume și arată cardul de invitație
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('invitationCard').style.display = 'block';
         }
 
-        // Control Muzică Vinil & Pickup
-        function toggleMusic() {
-            const music = document.getElementById('bgMusic');
-            const vinyl = document.getElementById('vinyl');
-            const turntable = document.getElementById('turntable');
+        // Control universal pentru ambele viniluri (oprește automat celălalt când îl pornești pe unul)
+        function toggleMusic(audioId, vinylId, turntableId) {
+            const audio1 = document.getElementById('bgMusic');
+            const audio2 = document.getElementById('specialMusic');
+            const vinyl1 = document.getElementById('vinyl1');
+            const vinyl2 = document.getElementById('vinyl2');
+            const t1 = document.getElementById('turntable1');
+            const t2 = document.getElementById('turntable2');
 
-            if (music.paused) {
-                music.play();
-                vinyl.classList.add('spinning');
-                turntable.classList.add('playing');
+            const currentAudio = document.getElementById(audioId);
+            const currentVinyl = document.getElementById(vinylId);
+            const currentTurntable = document.getElementById(turntableId);
+
+            if (currentAudio.paused) {
+                // Oprește ambele melodii și animații înainte de a o porni pe cea selectată
+                audio1.pause();
+                audio2.pause();
+                vinyl1.classList.remove('spinning');
+                vinyl2.classList.remove('spinning');
+                t1.classList.remove('playing');
+                t2.classList.remove('playing');
+
+                currentAudio.play();
+                currentVinyl.classList.add('spinning');
+                currentTurntable.classList.add('playing');
             } else {
-                music.pause();
-                vinyl.classList.remove('spinning');
-                turntable.classList.remove('playing');
+                currentAudio.pause();
+                currentVinyl.classList.remove('spinning');
+                currentTurntable.classList.remove('playing');
             }
         }
 
