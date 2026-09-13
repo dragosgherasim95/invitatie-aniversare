@@ -474,7 +474,7 @@
         }
 
         // Lista oficială de invitați (curățată automat de diacritice prin funcție)
-        const allowedGuestsRaw = ["raluca", "florin", "vlad", "lucian", "mihai", "denisa", "amalia", "mihaela", "răzvan", "vlada"];
+        const allowedGuestsRaw = ["raluca", "florin", "vlad", "lucian", "mihai", "denisa", "amalia", "mihaela", "răzvan", "vlada", "iustin"];
         const allowedGuests = allowedGuestsRaw.map(name => normalizeText(name));
 
         function openEnvelope() {
@@ -500,7 +500,6 @@
 
             let isAllowed = false;
             for (let guest of allowedGuests) {
-                // Verificăm dacă numele introdus conține numele din listă (funcționează și pentru Vlăduț, Vlăduți, etc.)
                 if (rawName.includes(guest)) {
                     isAllowed = true;
                     break;
