@@ -20,8 +20,105 @@
             position: relative;
         }
 
-        /* Ecranul de introducere a numelui */
+        /* --- STILURI PENTRU PLICUL INTERACTIV --- */
+        #envelopeScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 40;
+            cursor: pointer;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+
+        .envelope {
+            width: 320px;
+            height: 220px;
+            background: #e8e2d5;
+            border-radius: 8px;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #d5cbb8;
+        }
+
+        /* Capacul plicului (triunghiul de sus) */
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 120px solid #dcd3c1;
+            transform-origin: top;
+            transition: transform 0.8s ease-in-out;
+            z-index: 3;
+        }
+
+        /* Sigiliul de pe plic */
+        .envelope-seal {
+            position: absolute;
+            top: 95px;
+            width: 50px;
+            height: 50px;
+            background: #b9853f;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            z-index: 4;
+            border: 2px solid #fff8eb;
+            transition: transform 0.3s;
+        }
+
+        .envelope-seal:hover {
+            transform: scale(1.1);
+        }
+
+        .envelope-text {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #b9853f;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: pulse-label 1.5s infinite alternate;
+        }
+
+        /* Animație de deschidere plic */
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+        
+        .envelope.open .envelope-seal {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Animație de dispariție plic după deschidere */
+        .fade-out {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        @keyframes pulse-label {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* --- ECRANUL DE INTRODUCERE A NUMELUI (Ascuns inițial) --- */
         #welcomeScreen {
+            display: none;
             background-color: #ffffff;
             padding: 30px;
             border-radius: 16px;
@@ -30,6 +127,7 @@
             width: 100%;
             text-align: center;
             z-index: 30;
+            animation: fadeIn 0.8s ease;
         }
         #welcomeScreen h2 {
             color: #2c3e50;
@@ -70,7 +168,7 @@
             background-color: #9a6d31;
         }
 
-        /* Invitația propriu-zisă (ascunsă la început) */
+        /* --- INVITAȚIA PROPRIU-ZISĂ --- */
         .card {
             display: none;
             background-color: #ffffff;
@@ -82,6 +180,12 @@
             text-align: center;
             position: relative;
             z-index: 10;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .personal-title {
@@ -91,7 +195,7 @@
             margin-bottom: 15px;
         }
         
-        /* Container general pentru Pickup + Text Intuitiv în dreapta jos */
+        /* Pickup și Vinil în dreapta jos */
         .turntable-wrapper {
             position: absolute;
             bottom: 20px;
@@ -110,7 +214,6 @@
             }
         }
 
-        /* Scrisul intuitiv */
         .turntable-label {
             font-size: 11px;
             font-weight: 700;
@@ -125,12 +228,6 @@
             animation: pulse-label 1.5s infinite alternate;
         }
 
-        @keyframes pulse-label {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
-        }
-
-        /* Dispozitiv Pickup (Turntable) */
         .turntable-container {
             width: 90px;
             height: 80px;
@@ -265,15 +362,24 @@
 </head>
 <body>
 
-    <!-- Ecranul de introducere a numelui -->
+    <!-- 1. ECRANUL CU PLICUL INTERACTIV -->
+    <div id="envelopeScreen" onclick="openEnvelope()">
+        <div id="envelope" class="envelope">
+            <div class="envelope-flap"></div>
+            <div class="envelope-seal">💌</div>
+        </div>
+        <div class="envelope-text">Apasă pentru a deschide plicul</div>
+    </div>
+
+    <!-- 2. ECRANUL DE INTRODUCERE A NUMELUI -->
     <div id="welcomeScreen">
         <h2>Bine ai venit!</h2>
-        <p>Te rog introdu Numele și Prenumele tău pentru a deschide invitația:</p>
+        <p>Te rog introdu Numele și Prenumele tău pentru a continua:</p>
         <input type="text" id="guestNameInput" class="name-input" placeholder="Ex: Popescu Ion" autocomplete="name">
         <button class="btn-start" onclick="openInvitation()">Deschide Invitația</button>
     </div>
 
-    <!-- Invitația personalizată -->
+    <!-- 3. INVITAȚIA PROPRIU-ZISĂ -->
     <div class="card" id="invitationCard">
         <div id="personalGreeting" class="personal-title"></div>
 
@@ -306,7 +412,7 @@
 
         <div id="message" class="response-message"></div>
 
-        <!-- Pickup Dispozitiv cu Vinil în dreapta jos și text Play -->
+        <!-- Pickup Dispozitiv cu Vinil în dreapta jos -->
         <div class="turntable-wrapper" onclick="toggleMusic()" title="Apasă pentru a porni muzica">
             <div class="turntable-label">▶ Play music</div>
             <div id="turntable" class="turntable-container">
@@ -320,7 +426,7 @@
             </div>
         </div>
 
-        <!-- Audio Player cu melodia La_multi_ani.mp3 -->
+        <!-- Audio Player -->
         <audio id="bgMusic" loop>
             <source src="La_multi_ani.mp3" type="audio/mpeg">
         </audio>
@@ -332,6 +438,18 @@
     <script>
         const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
 
+        // Pasul 1: Deschide plicul și afișează ecranul de nume
+        function openEnvelope() {
+            const envelope = document.getElementById('envelope');
+            envelope.classList.add('open');
+
+            setTimeout(() => {
+                document.getElementById('envelopeScreen').style.display = 'none';
+                document.getElementById('welcomeScreen').style.display = 'block';
+            }, 700); // Trecerea se face lin după animația capacului
+        }
+
+        // Pasul 2: Preluare nume și afișare invitație
         function openInvitation() {
             const input = document.getElementById('guestNameInput');
             const name = input.value.trim();
