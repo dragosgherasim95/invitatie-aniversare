@@ -58,7 +58,6 @@
         .btn-yes:hover { background-color: #27ae60; transform: translateY(-2px); }
         .btn-no { background-color: #e74c3c; color: white; }
         .btn-no:hover { background-color: #c0392b; transform: translateY(-2px); }
-        .btn-cal { background-color: #4285F4; color: white; font-size: 14px; margin-top: 15px; padding: 10px 20px; }
         .response-message { font-size: 18px; font-weight: 600; color: #2c3e50; margin-top: 15px; }
         .silhouette { display: none; }
         .silhouette.show { display: flex; }
@@ -103,11 +102,6 @@
         </div>
 
         <div id="message" class="response-message"></div>
-
-        <!-- Adăugare în Calendar -->
-        <div id="calendarOption" style="display:none;">
-            <a id="calLink" href="#" target="_blank" class="btn btn-cal">📅 Adaugă în Google Calendar</a>
-        </div>
     </div>
 
     <div id="balloonContainer" class="balloon-container"></div>
@@ -154,7 +148,7 @@
                     osc.stop(startTime + 0.4);
                 });
             } else {
-                // Sunet trist descendent (Trombon comic / Sad trombone)
+                // Sunet trist descendent
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
 
@@ -207,8 +201,6 @@
                 messageElement.innerText = "Abia aștept să ne vedem! ❤️";
                 svgLeft.innerHTML = getHappySVG();
                 svgRight.innerHTML = getHappySVG();
-                document.getElementById('calendarOption').style.display = 'block';
-                setupCalendarLink();
                 launchConfetti();
                 createBalloons();
             } else {
@@ -216,18 +208,10 @@
                 messageElement.innerText = "Am înțeles, vii, mulțumesc te aștept cu drag";
                 svgLeft.innerHTML = getLeftSadSVG();
                 svgRight.innerHTML = getRightSadSVG();
-                document.getElementById('calendarOption').style.display = 'none';
             }
 
             document.getElementById('yesSilhouette').classList.add('show');
             document.getElementById('noSilhouette').classList.add('show');
-        }
-
-        function setupCalendarLink() {
-            const title = encodeURIComponent("Aniversare");
-            const details = encodeURIComponent("Te aștept cu drag la petrecerea mea!");
-            const link = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=20260919T170000Z/20260919T230000Z`;
-            document.getElementById('calLink').href = link;
         }
 
         function launchConfetti() {
