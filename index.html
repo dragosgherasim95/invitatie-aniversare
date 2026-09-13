@@ -223,13 +223,6 @@
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        .personal-title {
-            font-size: 20px;
-            color: #b9853f;
-            font-weight: bold;
-            margin-bottom: 15px;
-        }
         
         /* Pickup și Vinil în dreapta jos */
         .turntable-wrapper {
@@ -420,8 +413,6 @@
 
     <!-- 3. INVITAȚIA PROPRIU-ZISĂ -->
     <div class="card" id="invitationCard">
-        <div id="personalGreeting" class="personal-title"></div>
-
         <!-- Numărătoare inversă -->
         <div class="countdown">
             <div class="countdown-item"><span id="days" class="countdown-num">00</span><span class="countdown-label">Zile</span></div>
@@ -477,7 +468,7 @@
     <script>
         const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
 
-        // Lista oficială de invitați (fără diacritice sau majuscule forțate în verificare)
+        // Lista oficială de invitați
         const allowedGuests = ["raluca", "florin", "vlada", "lucian", "mihai", "denisa", "amalia", "mihaela", "vlad", "razvan"];
 
         function openEnvelope() {
@@ -501,7 +492,6 @@
                 return;
             }
 
-            // Verificăm dacă vreunul dintre numele permise se regăsește în textul introdus de utilizator
             let isAllowed = false;
             for (let guest of allowedGuests) {
                 if (rawName.includes(guest)) {
@@ -516,10 +506,7 @@
                 return;
             }
 
-            // Dacă este pe listă, ascundem eroarea (dacă era afișată) și deschidem invitația
             errorMsg.style.display = 'none';
-            const capitalizedName = input.value.trim();
-            document.getElementById('personalGreeting').innerText = `Invitație specială pentru ${capitalizedName}`;
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('invitationCard').style.display = 'block';
         }
