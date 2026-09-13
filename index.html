@@ -20,7 +20,7 @@
             position: relative;
         }
 
-        /* --- STILURI PENTRU PLICUL INTERACTIV --- */
+        /* --- PLICUL ELEGANT (Fără inimioară) --- */
         #envelopeScreen {
             display: flex;
             flex-direction: column;
@@ -31,69 +31,109 @@
             transition: transform 0.5s ease, opacity 0.5s ease;
         }
 
-        .envelope {
-            width: 320px;
-            height: 220px;
-            background: #e8e2d5;
-            border-radius: 8px;
+        .envelope-wrapper {
             position: relative;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #d5cbb8;
+            width: 340px;
+            height: 230px;
+            perspective: 1000px;
         }
 
-        /* Capacul plicului (triunghiul de sus) */
+        .envelope {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fdfbf7 0%, #f3eee3 100%);
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.12), 0 5px 15px rgba(0,0,0,0.08);
+            border: 1px solid #dcd3c1;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        /* Buzunarul interior al plicului (liniile de sub clapă) */
+        .envelope::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 170px solid #ede5d5;
+            border-right: 170px solid transparent;
+            border-bottom: 115px solid #e3dbcc;
+            z-index: 2;
+            border-bottom-left-radius: 6px;
+        }
+
+        .envelope::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-left: transparent;
+            border-right: 170px solid #ede5d5;
+            border-bottom: 115px solid #d9d0bf;
+            z-index: 2;
+            border-bottom-right-radius: 6px;
+        }
+
+        /* Capacul superior al plicului care se deschide */
         .envelope-flap {
             position: absolute;
             top: 0;
             left: 0;
             width: 0;
             height: 0;
-            border-left: 160px solid transparent;
-            border-right: 160px solid transparent;
-            border-top: 120px solid #dcd3c1;
+            border-left: 170px solid transparent;
+            border-right: 170px solid transparent;
+            border-top: 125px solid #ede5d5;
             transform-origin: top;
-            transition: transform 0.8s ease-in-out;
-            z-index: 3;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
         }
 
-        /* Sigiliul de pe plic */
+        /* Sigiliu elegant din ceară stilizată (fără inimioară) */
         .envelope-seal {
             position: absolute;
-            top: 95px;
-            width: 50px;
-            height: 50px;
-            background: #b9853f;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 44px;
+            background: radial-gradient(circle, #c59b52 0%, #9a6d31 100%);
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            z-index: 4;
-            border: 2px solid #fff8eb;
-            transition: transform 0.3s;
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            z-index: 6;
+            border: 2px solid #fceecf;
+            transition: transform 0.3s ease;
         }
 
-        .envelope-seal:hover {
-            transform: scale(1.1);
+        .envelope-wrapper:hover .envelope-seal {
+            transform: translateX(-50%) scale(1.08);
         }
 
         .envelope-text {
-            margin-top: 20px;
-            font-size: 16px;
-            color: #b9853f;
+            margin-top: 25px;
+            font-size: 15px;
+            color: #9a6d31;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             animation: pulse-label 1.5s infinite alternate;
         }
 
-        /* Animație de deschidere plic */
+        /* Animație deschidere plic */
         .envelope.open .envelope-flap {
             transform: rotateX(180deg);
             z-index: 1;
@@ -101,22 +141,15 @@
         
         .envelope.open .envelope-seal {
             opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        /* Animație de dispariție plic după deschidere */
-        .fade-out {
-            opacity: 0;
-            transform: scale(1.1);
-            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
 
         @keyframes pulse-label {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
+            0% { transform: scale(1); opacity: 0.85; }
+            100% { transform: scale(1.04); opacity: 1; }
         }
 
-        /* --- ECRANUL DE INTRODUCERE A NUMELUI (Ascuns inițial) --- */
+        /* --- ECRANUL DE INTRODUCERE A NUMELUI --- */
         #welcomeScreen {
             display: none;
             background-color: #ffffff;
@@ -362,11 +395,13 @@
 </head>
 <body>
 
-    <!-- 1. ECRANUL CU PLICUL INTERACTIV -->
+    <!-- 1. PLICUL ELEGANT INTERACTIV -->
     <div id="envelopeScreen" onclick="openEnvelope()">
-        <div id="envelope" class="envelope">
-            <div class="envelope-flap"></div>
-            <div class="envelope-seal">💌</div>
+        <div class="envelope-wrapper">
+            <div id="envelope" class="envelope">
+                <div class="envelope-flap"></div>
+                <div class="envelope-seal">★</div>
+            </div>
         </div>
         <div class="envelope-text">Apasă pentru a deschide plicul</div>
     </div>
@@ -438,7 +473,6 @@
     <script>
         const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
 
-        // Pasul 1: Deschide plicul și afișează ecranul de nume
         function openEnvelope() {
             const envelope = document.getElementById('envelope');
             envelope.classList.add('open');
@@ -446,10 +480,9 @@
             setTimeout(() => {
                 document.getElementById('envelopeScreen').style.display = 'none';
                 document.getElementById('welcomeScreen').style.display = 'block';
-            }, 700); // Trecerea se face lin după animația capacului
+            }, 700);
         }
 
-        // Pasul 2: Preluare nume și afișare invitație
         function openInvitation() {
             const input = document.getElementById('guestNameInput');
             const name = input.value.trim();
@@ -464,7 +497,6 @@
             document.getElementById('invitationCard').style.display = 'block';
         }
 
-        // Control Muzică Vinil & Pickup
         function toggleMusic() {
             const music = document.getElementById('bgMusic');
             const vinyl = document.getElementById('vinyl');
@@ -481,7 +513,6 @@
             }
         }
 
-        // Countdown timer
         setInterval(() => {
             const now = new Date().getTime();
             const diff = EVENT_DATE - now;
