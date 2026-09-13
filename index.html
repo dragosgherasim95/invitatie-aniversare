@@ -405,7 +405,7 @@
     <!-- 2. ECRANUL DE INTRODUCERE A NUMELUI -->
     <div id="welcomeScreen">
         <h2>Bine ai venit!</h2>
-        <p>Te rog introdu numele tău:</p>
+        <p>Te rog introdu numele tău, fără prenume</p>
         <input type="text" id="guestNameInput" class="name-input" placeholder="Ex: Ion" autocomplete="given-name">
         <button class="btn-start" onclick="openInvitation()">Deschide Invitația</button>
         <div id="errorMessage" class="error-msg">Ne pare rău, dar nu ești pe lista de invitați.</div>
@@ -468,8 +468,14 @@
     <script>
         const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
 
-        // Lista oficială de invitați
-        const allowedGuests = ["raluca", "florin", "vlada", "lucian", "mihai", "denisa", "amalia", "mihaela", "vlad", "razvan"];
+        // Funcție care elimină diacriticele și transformă textul în litere mici
+        function normalizeText(text) {
+            return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        }
+
+        // Lista oficială de invitați (curățată automat de diacritice prin funcție)
+        const allowedGuestsRaw = ["raluca", "florin", "vlad", "lucian", "mihai", "denisa", "amalia", "mihaela", "răzvan", "vlada"];
+        const allowedGuests = allowedGuestsRaw.map(name => normalizeText(name));
 
         function openEnvelope() {
             const envelope = document.getElementById('envelope');
@@ -484,7 +490,7 @@
         function openInvitation() {
             const input = document.getElementById('guestNameInput');
             const errorMsg = document.getElementById('errorMessage');
-            const rawName = input.value.trim().toLowerCase();
+            const rawName = normalizeText(input.value);
 
             if (rawName === "") {
                 errorMsg.innerText = "Te rog să introduci numele înainte de a continua!";
@@ -494,6 +500,7 @@
 
             let isAllowed = false;
             for (let guest of allowedGuests) {
+                // Verificăm dacă numele introdus conține numele din listă (funcționează și pentru Vlăduț, Vlăduți, etc.)
                 if (rawName.includes(guest)) {
                     isAllowed = true;
                     break;
