@@ -442,6 +442,14 @@
 
         <div id="message" class="response-message"></div>
 
+        <!-- Secțiune opțională pentru mesaj de lăsat -->
+        <div style="margin-top: 25px; border-top: 1px solid #f0d5a8; padding-top: 15px; text-align: left;">
+            <label for="guestWish" style="font-size: 13px; color: #b9853f; font-weight: 700; text-transform: uppercase; display: block; margin-bottom: 6px;">Vrei să lași un mesaj? (Opțional)</label>
+            <textarea id="guestWish" placeholder="Scrie un gând frumos..." style="width: 100%; height: 70px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none; resize: none; margin-bottom: 8px;"></textarea>
+            <button class="btn" onclick="sendWish()" style="background-color: #b9853f; color: white; padding: 8px 16px; font-size: 13px; border-radius: 6px; width: 100%;">Trimite Mesajul</button>
+            <p id="wishStatus" style="font-size: 13px; color: #27ae60; margin-top: 6px; display: none; text-align: center;"></p>
+        </div>
+
         <!-- Pickup Dispozitiv cu Vinil în dreapta jos -->
         <div class="turntable-wrapper" onclick="toggleMusic()" title="Apasă pentru a porni muzica">
             <div class="turntable-label">▶ Play music</div>
@@ -467,13 +475,13 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script>
         const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
+        let loggedInGuestName = ""; 
+        const SHEET_URL = "https://script.google.com/macros/s/AKfycbz65mRKka0U-CD3FOgc5hYk9f3SH_Vc9_ujltMrWP8Se1VyynlINz1t9eZhm8kKCzL7Nw/exec";
 
-        // Funcție care elimină diacriticele și transformă textul în litere mici
         function normalizeText(text) {
             return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
         }
 
-        // Lista oficială de invitați (curățată automat de diacritice prin funcție)
         const allowedGuestsRaw = ["raluca", "florin", "vlad", "lucian", "mihai", "denisa", "amalia", "mihaela", "răzvan", "vlada", "iustin"];
         const allowedGuests = allowedGuestsRaw.map(name => normalizeText(name));
 
@@ -490,7 +498,8 @@
         function openInvitation() {
             const input = document.getElementById('guestNameInput');
             const errorMsg = document.getElementById('errorMessage');
-            const rawName = normalizeText(input.value);
+            const originalInputValue = input.value.trim();
+            const rawName = normalizeText(originalInputValue);
 
             if (rawName === "") {
                 errorMsg.innerText = "Te rog să introduci numele înainte de a continua!";
@@ -512,9 +521,79 @@
                 return;
             }
 
+            loggedInGuestName = originalInputValue;
+
             errorMsg.style.display = 'none';
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('invitationCard').style.display = 'block';
+        }
+
+        function sendDataToSheet(raspunsText, mesajText) {
+            const data = {
+                nume: loggedInGuestName,
+                raspuns: raspunsText,
+                mesaj: mesajText
+            };
+
+            fetch(SHEET_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data)
+            }).catch(error => console.error("Erore la salvare:", error));
+        }
+
+        function respond(isComing) {
+            const messageElement = document.getElementById('message');
+            const svgLeft = document.getElementById('svgLeft');
+            const svgRight = document.getElementById('svgRight');
+
+            let raspunsStatus = "";
+            if (isComing) {
+                raspunsStatus = "Da (Vine)";
+                messageElement.innerText = "Abia aștept să ne vedem! ❤️";
+                svgLeft.innerHTML = getHappySVG();
+                svgRight.innerHTML = getHappySVG();
+                launchConfetti();
+                createBalloons();
+            } else {
+                raspunsStatus = "Nu (Nu vine)";
+                messageElement.innerText = "Am înțeles, îți mulțumesc pentru răspuns!";
+                svgLeft.innerHTML = getLeftSadSVG();
+                svgRight.innerHTML = getRightSadSVG();
+            }
+
+            document.getElementById('yesSilhouette').classList.add('show');
+            document.getElementById('noSilhouette').classList.add('show');
+
+            sendDataToSheet(raspunsStatus, "-");
+        }
+
+        function sendWish() {
+            const wishInput = document.getElementById('guestWish');
+            const statusMsg = document.getElementById('wishStatus');
+            const messageText = wishInput.value.trim();
+
+            if (messageText === "") {
+                statusMsg.style.color = "#e74c3c";
+                statusMsg.innerText = "Te rog să scrii un mesaj mai întâi!";
+                statusMsg.style.display = 'block';
+                return;
+            }
+
+            statusMsg.style.color = "#b9853f";
+            statusMsg.innerText = "Se trimite mesajul...";
+            statusMsg.style.display = 'block';
+
+            sendDataToSheet("Doar mesaj", messageText);
+
+            setTimeout(() => {
+                statusMsg.style.color = "#27ae60";
+                statusMsg.innerText = `Mulțumesc, ${loggedInGuestName}! Mesajul tău a fost salvat. ❤️`;
+                wishInput.value = "";
+            }, 600);
         }
 
         function toggleMusic() {
@@ -554,27 +633,6 @@
 
         function getHappySVG() {
             return `<g class="happy-bounce"><circle cx="50" cy="22" r="14" fill="none" stroke="#b9853f" stroke-width="4"/><circle cx="44" cy="18" r="2" fill="#b9853f"/><circle cx="56" cy="18" r="2" fill="#b9853f"/><path d="M42 26 Q50 32 58 26" fill="none" stroke="#b9853f" stroke-width="3" stroke-linecap="round"/><rect x="36" y="40" width="28" height="30" fill="none" stroke="#b9853f" stroke-width="4"/><rect x="36" y="70" width="28" height="18" fill="none" stroke="#b9853f" stroke-width="3"/><line x1="50" y1="70" x2="50" y2="88" stroke="#b9853f" stroke-width="3"/><line x1="42" y1="88" x2="38" y2="120" stroke="#b9853f" stroke-width="4" stroke-linecap="round"/><line x1="58" y1="88" x2="62" y2="120" stroke="#b9853f" stroke-width="4" stroke-linecap="round"/><path d="M36 44 L20 28 L15 20" fill="none" stroke="#b9853f" stroke-width="4" stroke-linecap="round"/><path d="M15 20 L12 14 M15 20 L18 15 M15 20 L11 22" stroke="#b9853f" stroke-width="2.5" stroke-linecap="round"/><path d="M64 44 L80 28 L85 20" fill="none" stroke="#b9853f" stroke-width="4" stroke-linecap="round"/><path d="M85 20 L88 14 M85 20 L82 15 M85 20 L89 22" stroke="#b9853f" stroke-width="2.5" stroke-linecap="round"/></g>`;
-        }
-
-        function respond(isComing) {
-            const messageElement = document.getElementById('message');
-            const svgLeft = document.getElementById('svgLeft');
-            const svgRight = document.getElementById('svgRight');
-
-            if (isComing) {
-                messageElement.innerText = "Abia aștept să ne vedem! ❤️";
-                svgLeft.innerHTML = getHappySVG();
-                svgRight.innerHTML = getHappySVG();
-                launchConfetti();
-                createBalloons();
-            } else {
-                messageElement.innerText = "Am înțeles, vii, mulțumesc te aștept cu drag";
-                svgLeft.innerHTML = getLeftSadSVG();
-                svgRight.innerHTML = getRightSadSVG();
-            }
-
-            document.getElementById('yesSilhouette').classList.add('show');
-            document.getElementById('noSilhouette').classList.add('show');
         }
 
         function launchConfetti() {
