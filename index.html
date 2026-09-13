@@ -91,45 +91,38 @@
             margin-bottom: 15px;
         }
         
-        /* Container pentru cele două viniluri în dreapta jos */
-        .turntables-wrapper {
+        /* Container general pentru Pickup + Text Intuitiv în dreapta jos */
+        .turntable-wrapper {
             position: absolute;
             bottom: 20px;
-            right: -30px;
+            right: -25px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            align-items: center;
             z-index: 20;
+            cursor: pointer;
         }
 
         @media (max-width: 580px) {
-            .turntables-wrapper {
+            .turntable-wrapper {
                 right: 10px;
                 bottom: 15px;
             }
         }
 
-        .turntable-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        /* Scrisul intuitiv de pe fiecare vinil */
+        /* Scrisul intuitiv */
         .turntable-label {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             color: #b9853f;
             background: #fff8eb;
             border: 1px solid #f0d5a8;
-            padding: 2px 5px;
+            padding: 2px 6px;
             border-radius: 6px;
-            margin-bottom: 3px;
+            margin-bottom: 4px;
             text-transform: uppercase;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             animation: pulse-label 1.5s infinite alternate;
-            white-space: nowrap;
         }
 
         @keyframes pulse-label {
@@ -137,10 +130,10 @@
             100% { transform: scale(1.05); }
         }
 
-        /* Dispozitiv Pickup */
+        /* Dispozitiv Pickup (Turntable) */
         .turntable-container {
-            width: 85px;
-            height: 75px;
+            width: 90px;
+            height: 80px;
             background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
             border: 2px solid #b9853f;
             border-radius: 12px;
@@ -153,8 +146,8 @@
         }
         
         .turntable-platter {
-            width: 58px;
-            height: 58px;
+            width: 62px;
+            height: 62px;
             background: #111;
             border-radius: 50%;
             display: flex;
@@ -165,8 +158,8 @@
         }
 
         .vinyl {
-            width: 54px;
-            height: 54px;
+            width: 58px;
+            height: 58px;
             background: radial-gradient(circle, #333 20%, #111 21%, #111 30%, #222 31%, #111 60%, #000 100%);
             border-radius: 50%;
             border: 1px solid #555;
@@ -176,17 +169,12 @@
             transition: transform 0.3s ease;
         }
         .vinyl-center {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             background-color: #e74c3c;
             border-radius: 50%;
             border: 2px solid #fff;
         }
-        /* Culoare diferită pentru centrul vinilului de dedicație */
-        .vinyl-center.special {
-            background-color: #3498db;
-        }
-
         .vinyl.spinning {
             animation: spin 3s linear infinite;
         }
@@ -196,10 +184,10 @@
 
         .tonearm {
             position: absolute;
-            top: 5px;
-            right: 5px;
+            top: 6px;
+            right: 6px;
             width: 3px;
-            height: 32px;
+            height: 35px;
             background: #d4af37;
             border-radius: 2px;
             transform-origin: top right;
@@ -224,10 +212,10 @@
 
         .power-knob {
             position: absolute;
-            bottom: 4px;
-            left: 5px;
-            width: 5px;
-            height: 5px;
+            bottom: 5px;
+            left: 6px;
+            width: 6px;
+            height: 6px;
             background: #b9853f;
             border-radius: 50%;
         }
@@ -277,7 +265,7 @@
 </head>
 <body>
 
-    <!-- Ecranul de nume -->
+    <!-- Ecranul de introducere a numelui -->
     <div id="welcomeScreen">
         <h2>Bine ai venit!</h2>
         <p>Te rog introdu Numele și Prenumele tău pentru a deschide invitația:</p>
@@ -285,11 +273,11 @@
         <button class="btn-start" onclick="openInvitation()">Deschide Invitația</button>
     </div>
 
-    <!-- Invitația principală -->
+    <!-- Invitația personalizată -->
     <div class="card" id="invitationCard">
         <div id="personalGreeting" class="personal-title"></div>
 
-        <!-- Countdown -->
+        <!-- Numărătoare inversă -->
         <div class="countdown">
             <div class="countdown-item"><span id="days" class="countdown-num">00</span><span class="countdown-label">Zile</span></div>
             <div class="countdown-item"><span id="hours" class="countdown-num">00</span><span class="countdown-label">Ore</span></div>
@@ -318,45 +306,23 @@
 
         <div id="message" class="response-message"></div>
 
-        <!-- Cele două viniluri în dreapta jos -->
-        <div class="turntables-wrapper">
-            <!-- Vinil 1: Melodia Principală -->
-            <div class="turntable-box" onclick="toggleMusic('bgMusic', 'vinyl1', 'turntable1')">
-                <div class="turntable-label">▶ Melodia Ta</div>
-                <div id="turntable1" class="turntable-container">
-                    <div class="turntable-platter">
-                        <div id="vinyl1" class="vinyl">
-                            <div class="vinyl-center"></div>
-                        </div>
+        <!-- Pickup Dispozitiv cu Vinil în dreapta jos și text Play -->
+        <div class="turntable-wrapper" onclick="toggleMusic()" title="Apasă pentru a porni muzica">
+            <div class="turntable-label">▶ Play music</div>
+            <div id="turntable" class="turntable-container">
+                <div class="turntable-platter">
+                    <div id="vinyl" class="vinyl">
+                        <div class="vinyl-center"></div>
                     </div>
-                    <div class="tonearm"></div>
-                    <div class="power-knob"></div>
                 </div>
-            </div>
-
-            <!-- Vinil 2: Dedicația Specială -->
-            <div class="turntable-box" onclick="toggleMusic('specialMusic', 'vinyl2', 'turntable2')">
-                <div class="turntable-label">⭐ Dedicație</div>
-                <div id="turntable2" class="turntable-container">
-                    <div class="turntable-platter">
-                        <div id="vinyl2" class="vinyl">
-                            <div class="vinyl-center special"></div>
-                        </div>
-                    </div>
-                    <div class="tonearm"></div>
-                    <div class="power-knob"></div>
-                </div>
+                <div class="tonearm"></div>
+                <div class="power-knob"></div>
             </div>
         </div>
 
-        <!-- Player Audio 1 -->
+        <!-- Audio Player cu melodia La_multi_ani.mp3 -->
         <audio id="bgMusic" loop>
             <source src="La_multi_ani.mp3" type="audio/mpeg">
-        </audio>
-
-        <!-- Player Audio 2 (Asigură-te că urci pe Git și melodia dedicată, ex: dedicatie.mp3) -->
-        <audio id="specialMusic" loop>
-            <source src="dedicatie.mp3" type="audio/mpeg">
         </audio>
     </div>
 
@@ -380,35 +346,20 @@
             document.getElementById('invitationCard').style.display = 'block';
         }
 
-        // Control universal pentru ambele viniluri (oprește automat celălalt când îl pornești pe unul)
-        function toggleMusic(audioId, vinylId, turntableId) {
-            const audio1 = document.getElementById('bgMusic');
-            const audio2 = document.getElementById('specialMusic');
-            const vinyl1 = document.getElementById('vinyl1');
-            const vinyl2 = document.getElementById('vinyl2');
-            const t1 = document.getElementById('turntable1');
-            const t2 = document.getElementById('turntable2');
+        // Control Muzică Vinil & Pickup
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const vinyl = document.getElementById('vinyl');
+            const turntable = document.getElementById('turntable');
 
-            const currentAudio = document.getElementById(audioId);
-            const currentVinyl = document.getElementById(vinylId);
-            const currentTurntable = document.getElementById(turntableId);
-
-            if (currentAudio.paused) {
-                // Oprește ambele melodii și animații înainte de a o porni pe cea selectată
-                audio1.pause();
-                audio2.pause();
-                vinyl1.classList.remove('spinning');
-                vinyl2.classList.remove('spinning');
-                t1.classList.remove('playing');
-                t2.classList.remove('playing');
-
-                currentAudio.play();
-                currentVinyl.classList.add('spinning');
-                currentTurntable.classList.add('playing');
+            if (music.paused) {
+                music.play();
+                vinyl.classList.add('spinning');
+                turntable.classList.add('playing');
             } else {
-                currentAudio.pause();
-                currentVinyl.classList.remove('spinning');
-                currentTurntable.classList.remove('playing');
+                music.pause();
+                vinyl.classList.remove('spinning');
+                turntable.classList.remove('playing');
             }
         }
 
