@@ -405,8 +405,8 @@
     <!-- 2. ECRANUL DE INTRODUCERE A NUMELUI -->
     <div id="welcomeScreen">
         <h2>Bine ai venit!</h2>
-        <p>Te rog introdu Numele și Prenumele tău pentru a continua:</p>
-        <input type="text" id="guestNameInput" class="name-input" placeholder="Ex: Popescu Ion" autocomplete="name">
+        <p>Te rog introdu numele tău:</p>
+        <input type="text" id="guestNameInput" class="name-input" placeholder="Ex: Ion" autocomplete="given-name">
         <button class="btn-start" onclick="openInvitation()">Deschide Invitația</button>
         <div id="errorMessage" class="error-msg">Ne pare rău, dar nu ești pe lista de invitați.</div>
     </div>
@@ -487,7 +487,7 @@
             const rawName = input.value.trim().toLowerCase();
 
             if (rawName === "") {
-                errorMsg.innerText = "Te rog să introduci numele și prenumele înainte de a continua!";
+                errorMsg.innerText = "Te rog să introduci numele înainte de a continua!";
                 errorMsg.style.display = 'block';
                 return;
             }
