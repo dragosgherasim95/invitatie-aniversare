@@ -30,6 +30,41 @@
             position: relative;
             z-index: 10;
         }
+        
+        /* Player Vinil */
+        .vinyl-container {
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            z-index: 20;
+            cursor: pointer;
+        }
+        .vinyl {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #333 20%, #111 21%, #111 30%, #222 31%, #111 60%, #000 100%);
+            border-radius: 50%;
+            border: 2px solid #b9853f;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        .vinyl-center {
+            width: 20px;
+            height: 20px;
+            background-color: #e74c3c;
+            border-radius: 50%;
+            border: 2px solid #fff;
+        }
+        .vinyl.spinning {
+            animation: spin 3s linear infinite;
+        }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+
         .countdown {
             display: flex;
             justify-content: space-around;
@@ -38,6 +73,7 @@
             padding: 10px;
             border-radius: 12px;
             margin-bottom: 20px;
+            margin-top: 15px;
         }
         .countdown-item { display: flex; flex-direction: column; }
         .countdown-num { font-size: 20px; font-weight: bold; color: #b9853f; }
@@ -75,6 +111,18 @@
 <body>
 
     <div class="card">
+        <!-- Vinil Muzică -->
+        <div class="vinyl-container" onclick="toggleMusic()" title="Apasă pentru muzică">
+            <div id="vinyl" class="vinyl">
+                <div class="vinyl-center"></div>
+            </div>
+        </div>
+
+        <!-- Audio Player -->
+        <audio id="bgMusic" loop>
+            <source src="melodie.mp3" type="audio/mpeg">
+        </audio>
+
         <!-- Numărătoare inversă -->
         <div class="countdown">
             <div class="countdown-item"><span id="days" class="countdown-num">00</span><span class="countdown-label">Zile</span></div>
@@ -83,7 +131,8 @@
             <div class="countdown-item"><span id="seconds" class="countdown-num">00</span><span class="countdown-label">Sec</span></div>
         </div>
 
-        <img src="https://i.postimg.cc/Wzk7SfCg/Whats-App-Image-2026-09-13-at-17-09-01.jpg" alt="Invitație aniversare" class="invitation-img">
+        <!-- Imaginea din Git -->
+        <img src="poza_invitatie.jpeg" alt="Invitație aniversare" class="invitation-img">
 
         <div class="button-group">
             <div class="button-slot">
@@ -108,9 +157,23 @@
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <script>
-        const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime(); // 19 Septembrie 2026, ora 17:00
+        const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
 
-        // Generator de Sunete Melodice (Web Audio API)
+        // Control Muzică Vinil
+        function toggleMusic() {
+            const music = document.getElementById('bgMusic');
+            const vinyl = document.getElementById('vinyl');
+
+            if (music.paused) {
+                music.play();
+                vinyl.classList.add('spinning');
+            } else {
+                music.pause();
+                vinyl.classList.remove('spinning');
+            }
+        }
+
+        // Generator de Sunete Melodice
         let audioCtx;
         function getAudioContext() {
             if (!audioCtx) {
@@ -127,41 +190,31 @@
             const now = ctx.currentTime;
 
             if (type === 'happy') {
-                // Fanfară / Jingle vesel (Do - Mi - Sol - Do)
-                const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                const notes = [523.25, 659.25, 783.99, 1046.50];
                 notes.forEach((freq, index) => {
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
-                    
                     osc.type = 'sine';
                     osc.frequency.value = freq;
-                    
                     const startTime = now + (index * 0.08);
                     gain.gain.setValueAtTime(0, startTime);
                     gain.gain.linearRampToValueAtTime(0.2, startTime + 0.02);
                     gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
-
                     osc.connect(gain);
                     gain.connect(ctx.destination);
-
                     osc.start(startTime);
                     osc.stop(startTime + 0.4);
                 });
             } else {
-                // Sunet trist descendent
                 const osc = ctx.createOscillator();
                 const gain = ctx.createGain();
-
                 osc.type = 'sawtooth';
                 osc.frequency.setValueAtTime(300, now);
                 osc.frequency.linearRampToValueAtTime(150, now + 0.5);
-
                 gain.gain.setValueAtTime(0.15, now);
                 gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
-
                 osc.connect(gain);
                 gain.connect(ctx.destination);
-
                 osc.start(now);
                 osc.stop(now + 0.5);
             }
