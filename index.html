@@ -145,7 +145,7 @@
             100% { transform: scale(1.04); opacity: 1; }
         }
 
-        /* --- ECRANUL DE INTRODUCERE A NUMELUI --- */
+        /* --- ECRANUL DE INTRODUCERE A PRENUMELUI --- */
         #welcomeScreen {
             display: none;
             background-color: #ffffff;
@@ -402,10 +402,10 @@
         <div class="envelope-text">Apasă pentru a deschide plicul</div>
     </div>
 
-    <!-- 2. ECRANUL DE INTRODUCERE A NUMELUI -->
+    <!-- 2. ECRANUL DE INTRODUCERE A PRENUMELUI -->
     <div id="welcomeScreen">
         <h2>Bine ai venit!</h2>
-        <p>Te rog introdu numele tău, fără prenume</p>
+        <p>Te rog introdu prenumele tău</p>
         <input type="text" id="guestNameInput" class="name-input" placeholder="Ex: Ion" autocomplete="given-name">
         <button class="btn-start" onclick="openInvitation()">Deschide Invitația</button>
         <div id="errorMessage" class="error-msg">Ne pare rău, dar nu ești pe lista de invitați.</div>
@@ -494,7 +494,7 @@
             const rawName = normalizeText(originalInputValue);
 
             if (rawName === "") {
-                errorMsg.innerText = "Te rog să introduci numele înainte de a continua!";
+                errorMsg.innerText = "Te rog să introduci prenumele înainte de a continua!";
                 errorMsg.style.display = 'block';
                 return;
             }
