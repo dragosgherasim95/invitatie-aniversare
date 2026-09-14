@@ -360,8 +360,36 @@
         .countdown-num { font-size: 20px; font-weight: bold; color: #b9853f; }
         .countdown-label { font-size: 11px; color: #777; text-transform: uppercase; }
         .invitation-img {
-            width: 100%; height: auto; border-radius: 12px; margin-bottom: 20px; display: block;
+            width: 100%; height: auto; border-radius: 12px; margin-bottom: 15px; display: block;
         }
+        
+        /* Câmp opțional mesaj */
+        .message-input-container {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .message-input-container label {
+            font-size: 13px;
+            color: #555;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .custom-message-input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            resize: vertical;
+            min-height: 50px;
+            font-family: inherit;
+        }
+        .custom-message-input:focus {
+            border-color: #b9853f;
+        }
+
         .button-group {
             display: flex; gap: 16px; justify-content: center; margin-bottom: 15px; flex-wrap: wrap; align-items: center;
         }
@@ -424,6 +452,12 @@
         <!-- Imaginea din Git -->
         <img src="poza_invitatie.jpeg" alt="Invitație aniversare" class="invitation-img">
 
+        <!-- Câmp opțional pentru mesaj -->
+        <div class="message-input-container">
+            <label for="guestMessage">Mesaj personalizat (opțional):</label>
+            <textarea id="guestMessage" class="custom-message-input" placeholder="Scrie un gând sau o urare..."></textarea>
+        </div>
+
         <div class="button-group">
             <div class="button-slot">
                 <div id="yesSilhouette" class="silhouette">
@@ -468,7 +502,7 @@
     <script>
         const EVENT_DATE = new Date("2026-09-19T17:00:00").getTime();
         let loggedInGuestName = ""; 
-        const SHEET_URL = "https://script.google.com/macros/s/AKfycbxzWwOVTwg2v0LKtpbiUSRSk0hQf3P-emITAFjsD1z-nEb4gyA84l65vff6fUlHkr9UJQ/exec";
+        const SHEET_URL = "https://script.google.com/macros/s/AKfycbzACybVEcdYHIQeWVPfJhoh8FPn0KzyGyM7sTz8GfGe8RRiV2fDRz9aLDHSTjhqUZjpBQ/exec";
 
         function normalizeText(text) {
             return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
@@ -524,6 +558,7 @@
             const messageElement = document.getElementById('message');
             const svgLeft = document.getElementById('svgLeft');
             const svgRight = document.getElementById('svgRight');
+            const customMsg = document.getElementById('guestMessage').value.trim();
 
             let raspunsStatus = "";
             if (isComing) {
@@ -543,11 +578,11 @@
             document.getElementById('yesSilhouette').classList.add('show');
             document.getElementById('noSilhouette').classList.add('show');
 
-            // Trimite statusul în Google Sheets
+            // Trimite datele în Google Sheets în ordinea: Nume, Răspuns, Mesaj
             const data = {
                 nume: loggedInGuestName,
                 raspuns: raspunsStatus,
-                mesaj: "-"
+                mesaj: customMsg
             };
 
             fetch(SHEET_URL, {
